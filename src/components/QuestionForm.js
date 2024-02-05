@@ -19,7 +19,36 @@ function QuestionForm(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
+  
+    const apiUrl = "http://localhost:4000/questions";
+  
+    // Create the payload for the POST request
+    const questionData = {
+      prompt: formData.prompt,
+      answers: [formData.answer1, formData.answer2, formData.answer3, formData.answer4],
+      correctIndex: parseInt(formData.correctIndex, 10), // Ensure it's an integer
+    };
+  
+    // Make the POST request
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(questionData),
+    })
+      .then((response) => response.json())
+      .then((newQuestion) => {
+        alert("new question added")
+        console.log("New question added:", newQuestion);
+        window.location.reload()
+  
+        // Assuming there's a prop callback from the parent to update the list
+        if (props.onQuestionAdded) {
+          props.onQuestionAdded(newQuestion);
+        }
+      })
+      .catch((error) => console.error("Error adding question:", error));
   }
 
   return (
